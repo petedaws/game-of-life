@@ -26,13 +26,13 @@ class SocketTest(event.Event):
 
 def main():
 
-	#timer1 = TimerTest('timer2')
-	#timer2 = TimerTest('timer1')
+	timer1 = TimerTest('timer2')
+	timer2 = TimerTest('timer1')
 	sock1 = SocketTest(10001)
 	sock2 = SocketTest(10002)
 
-	#event.add_timer(1,timer1.hello)
-	#event.add_timer(3,timer2.hello)
+	event.add_timer(1,timer1.hello)
+	event.add_timer(3,timer2.hello)
 	event.add_io_watcher(sock1.sock,sock1.receive)
 	event.add_io_watcher(sock2.sock,sock2.receive)
 

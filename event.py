@@ -8,8 +8,10 @@ class Event:
 		self.events = {}
 		self.timers = []
 
-	def emit(self,event):
-		self.events[event]()
+	def emit(self,event_name):
+		for event in self.events:
+			if event['name'] == event_name:
+				self.events[event]()
 
 	def connect(self,event_name,callback):
 		assert callable(callback)
@@ -58,14 +60,3 @@ def mainloop():
 				for read_fd in read_fds.keys():
 					if read_fd is reader:
 						read_fds[read_fd]()
-			
-		
-if __name__ == "__main__":
-
-	def test():
-		print 'test_event'
-
-	e = Event()
-	e.connect('test',test)
-	e.emit('test')
-	e.run()
