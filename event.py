@@ -39,21 +39,19 @@ def mainloop():
 		timer['next'] = time.time() + timer['interval']
 
 	while True:
-		earliest_timer = None
+		next_timer = None
 		timeout = None
-		if len(timers):
-			for timer in timers:
-				if earliest_timer is None or time.time() - timer['next'] < earliest_timer:
-					earliest_timer = timer
-		timeout = earliest_timer['next'] - time.time()
+		for timer in timers:
+			if next_timer is None or timer['next'] < next_timer['next']:
+				next_timer = timer
+				timeout = next_timer['next'] - time.time()
 
 		readable, writeable, exceptional = select.select(read_fds.keys(), write_fds, read_fds,max(timeout,0))
 
-		if len(timers):		
-			for timer in timers:
-				if timer['next'] - time.time() <= 0:
-					timer['callback']()
-					timer['next'] = time.time() + timer['interval']
+		for timer in timers:
+			if timer['next'] - time.time() <= 0:
+				timer['callback']()
+				timer['next'] = time.time() + timer['interval']
 
 		if len(readable):
 			for reader in readable:
