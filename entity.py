@@ -31,7 +31,10 @@ class Entity(event.Event):
 		sock.sendto(str(data), (conf.message_bus_grp, conf.message_bus_port))
 
 
-if __name__ == "__main__":
-	entity = Entity(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+def run(entity_id,pos_x,pos_y,factor):
+	entity = Entity(entity_id,pos_x,pos_y,factor)
 	event.add_timer(0.1,entity.move,name='timer1')
 	event.mainloop()
+
+if __name__ == "__main__":
+	run(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
