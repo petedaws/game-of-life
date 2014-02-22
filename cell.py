@@ -1,55 +1,37 @@
 import subprocess
 import socket
 import time
-from event import Event
-
+import event
+import random
+import sys
 import conf
 
-class cell(Event):
+class Entity(event.Event):
 
-	def __init__(self):
-		self.cell_id = '1'
-		self.position = (0,0)
-		self.setup_listener()
-		self.connect('rx',self.process_rx)
-		self.connect('report',self.report)
-		self.timer_add('report')
-		self.alive()
+	def __init__(self,entity_id,pos_x,pos_y,factor):
+		event.Event.__init__(self)
+		self.entity_id = entity_id
+		self.position = (int(pos_x),int(pos_y))
+		self.move_factor = int(factor)
+		self.connect('position_update',self.update_tx)
 
-
-	def run_listener(self):
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.sock.bind(('', conf.cell_port))
-		mreq = struct.pack("4sl", socket.inet_aton(conf.MCAST_GRP), socket.INADDR_ANY)
-		self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-
-		while True:
-			for sock in readable:
-				 sock.recv(1024)
-
-	def process_rx(self):
-
-
-	def report(self):
+	def move(self):
+		new_x = random.randrange(-1,2)*self.move_factor
+		new_y = random.randrange(-1,2)*self.move_factor
+		self.position = (self.position[0]+new_x,self.position[1]+new_y)
 		data = {
-			'cell_id':self.cell_id,
+			'entity_id':self.entity_id,
 			'position':self.position,
 			}
+		self.emit('position_update',data)
 
-		MCAST_GRP = '224.1.1.1'
-		MCAST_PORT = 5007
-
+	def update_tx(self,data):
 		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 		sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-		sock.sendto(str(data), (conf.MCAST_GRP, conf.MCAST_PORT))
-		print "sent data to %s" % (str((conf.MCAST_GRP, conf.MCAST_PORT)))
+		sock.sendto(str(data), (conf.message_bus_grp, conf.message_bus_port))
 
-	def alive(self):
-		
-		while(1):
-			self.report()
-			time.sleep(1)
 
 if __name__ == "__main__":
-	cell()
+	entity = Entity(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+	event.add_timer(0.1,entity.move,name='timer1')
+	event.mainloop()
