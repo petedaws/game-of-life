@@ -1,9 +1,9 @@
 import sys
-#import and init pygame
 import pygame
 import conf
 import socket
 import event
+import messagebus
 import struct
 
 # Define the colors we will use in RGB format
@@ -13,39 +13,20 @@ BLUE =  (  0,   0, 255)
 GREEN = (  0, 255,   0)
 RED =   (255,   0,   0)
 
-class Message(event.Event):
-	
-	def __init__(self,port=10000):
-		event.Event.__init__(self)
-		self.__create_socket()
-		self.connect('new_message',self.process)
 
-	def __create_socket(self):
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.sock.bind(('', conf.message_bus_port))
-		mreq = struct.pack("4sl", socket.inet_aton(conf.message_bus_grp), socket.INADDR_ANY)
-		self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-
-	def receive(self):
-		message = self.sock.recv(1024)
-		self.emit('new_message',message)
-
-	def process(self,message):
-		packet = eval(message)
-		if 'entity_id' in packet:
-			self.emit('entity_update',packet)
 		
 
 class CellModel():
-	def __init__(self,init_pos):
-		self.pos = init_pos
+	def __init__(self,init_pos_x,init_pos_y):
+		self.pos_x = init_pos_x
+		self.pos_y = init_pos_y
 
-	def update(self,pos):
-		self.pos = pos
+	def update(self,pos_x,pos_y):
+		self.pos_x = pos_x
+		self.pos_y = pos_y
 
 	def draw(self,window):
-		pygame.draw.circle(window,BLUE,self.pos,5)
+		pygame.draw.circle(window,BLUE,(self.pos_x,self.pos_y),5)
 
 class Viewer(event.Event):
 	
@@ -54,19 +35,20 @@ class Viewer(event.Event):
 		pygame.init() 
 		self.window = pygame.display.set_mode((640, 480)) 
 		self.entities = {}
-		self.messager = Message()
-		self.connect('entity_update',self.process_entity)
+		self.message_rx = messagebus.MessageRx()
+		self.connect('new_message',self.process_entity)
 
 	def start(self):
 		event.add_timer(0.02,self.draw)
-		event.add_io_watcher(self.messager.sock,self.messager.receive)
+		event.add_io_watcher(self.message_rx.sock,self.message_rx.receive)
 		event.mainloop()
 
-	def process_entity(self,entity_message):
-		if entity_message['entity_id'] in self.entities:
-			self.entities[entity_message['entity_id']].update(entity_message['position'])
+	def process_entity(self,message):
+		entity_id,attributes = message.popitem()
+		if entity_id in self.entities:
+			self.entities[entity_id].update(attributes['position_x'],attributes['position_y'])
 		else:
-			self.entities[entity_message['entity_id']] = CellModel(entity_message['position'])
+			self.entities[entity_id] = CellModel(attributes['position_x'],attributes['position_y'])
 
 	def draw_entities(self):
 		for entity in self.entities:
