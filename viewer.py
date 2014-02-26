@@ -5,6 +5,7 @@ import socket
 import event
 import messagebus
 import struct
+import behaviour
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -13,20 +14,21 @@ BLUE =  (  0,   0, 255)
 GREEN = (  0, 255,   0)
 RED =   (255,   0,   0)
 
-
+COLOUR_MAP = {'RandomMove':BLUE, 'Avoid':GREEN}
 		
 
 class CellModel():
-	def __init__(self,init_pos_x,init_pos_y):
+	def __init__(self,init_pos_x,init_pos_y,color):
 		self.pos_x = init_pos_x
 		self.pos_y = init_pos_y
+		self.color = color
 
 	def update(self,pos_x,pos_y):
 		self.pos_x = pos_x
 		self.pos_y = pos_y
 
 	def draw(self,window):
-		pygame.draw.circle(window,BLUE,(self.pos_x,self.pos_y),5)
+		pygame.draw.circle(window,self.color,(self.pos_x,self.pos_y),5)
 
 class Viewer(event.Event):
 	
@@ -48,7 +50,7 @@ class Viewer(event.Event):
 		if entity_id in self.entities:
 			self.entities[entity_id].update(attributes['position_x'],attributes['position_y'])
 		else:
-			self.entities[entity_id] = CellModel(attributes['position_x'],attributes['position_y'])
+			self.entities[entity_id] = CellModel(attributes['position_x'],attributes['position_y'],COLOUR_MAP[attributes['behaviour']])
 
 	def draw_entities(self):
 		for entity in self.entities:

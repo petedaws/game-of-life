@@ -1,4 +1,5 @@
 import random
+import math
 
 class Behaviour():
 
@@ -20,10 +21,11 @@ class Avoid(Behaviour):
 		for entity_id in self.entity.other_entities:
 			x_dist = self.entity.other_entities[entity_id].attributes['position_x'] - self.entity.attributes['position_x']
 			y_dist = self.entity.other_entities[entity_id].attributes['position_y'] - self.entity.attributes['position_y']
-			if abs(x_dist) < 50:
-				self.entity.attributes['position_x'] = self.entity.attributes['position_x'] + 1
-			if abs(y_dist) < 50:
-				self.entity.attributes['position_y'] = self.entity.attributes['position_y'] + 1
+			if math.hypot(x_dist,y_dist) < 50:
+				if random.choice([True,False]):
+					self.entity.attributes['position_x'] = self.entity.attributes['position_x'] - int(math.copysign(1,x_dist))
+				else:
+					self.entity.attributes['position_y'] = self.entity.attributes['position_y'] - int(math.copysign(1,y_dist))
 		self.entity.emit('update')
 
 class Combine(Behaviour):
