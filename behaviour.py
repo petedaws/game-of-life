@@ -1,6 +1,5 @@
 import random
 import math
-from operator import itemgetter
 
 class Behaviour():
 
