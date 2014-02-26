@@ -1,5 +1,6 @@
 import random
 import math
+from operator import itemgetter
 
 class Behaviour():
 
@@ -18,14 +19,25 @@ class RandomMove(Behaviour):
 class Avoid(Behaviour):
 	
 	def do(self):
-		for entity_id in self.entity.other_entities:
-			x_dist = self.entity.other_entities[entity_id].attributes['position_x'] - self.entity.attributes['position_x']
-			y_dist = self.entity.other_entities[entity_id].attributes['position_y'] - self.entity.attributes['position_y']
-			if math.hypot(x_dist,y_dist) < 50:
-				if random.choice([True,False]):
-					self.entity.attributes['position_x'] = self.entity.attributes['position_x'] - int(math.copysign(1,x_dist))
+
+		if len(self.entity.other_entities) > 0:
+			entity_distances = {}
+			for entity_id in self.entity.other_entities:
+				x_dist = self.entity.other_entities[entity_id].attributes['position_x'] - self.entity.attributes['position_x']
+				y_dist = self.entity.other_entities[entity_id].attributes['position_y'] - self.entity.attributes['position_y']
+				hypot_dist = math.hypot(x_dist,y_dist)
+				entity_distances[entity_id] = (x_dist,y_dist,hypot_dist)
+
+			closest_distance = min(entity_distances.itervalues(), key=lambda x:x[2])
+
+			if closest_distance[2] == 0:
+				self.entity.attributes['position_x'] = self.entity.attributes['position_x'] + random.randrange(-4,5)		
+				self.entity.attributes['position_y'] = self.entity.attributes['position_y'] + random.randrange(-4,5)
+			elif closest_distance[2] < 50:
+				if closest_distance.index(min(closest_distance[0:2])) == 0:
+					self.entity.attributes['position_x'] = self.entity.attributes['position_x'] + int(math.copysign(1,closest_distance[1]))
 				else:
-					self.entity.attributes['position_y'] = self.entity.attributes['position_y'] - int(math.copysign(1,y_dist))
+					self.entity.attributes['position_y'] = self.entity.attributes['position_y'] + int(math.copysign(1,closest_distance[2]))
 		self.entity.emit('update')
 
 class Combine(Behaviour):

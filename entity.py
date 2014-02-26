@@ -50,7 +50,7 @@ if __name__ == "__main__":
 	test_init =   [
 			{
 			'position_x':320,
-			'position_y':240,
+			'position_y':250,
 			'type':'grass',
 			'state':'alive',
 			'age':0,
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
 			{
 			'position_x':320,
-			'position_y':240,
+			'position_y':250,
 			'type':'grass',
 			'state':'alive',
 			'age':0,
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
 			{
 			'position_x':320,
-			'position_y':240,
+			'position_y':250,
 			'type':'grass',
 			'state':'alive',
 			'age':0,
@@ -89,46 +89,7 @@ if __name__ == "__main__":
 
 			{
 			'position_x':320,
-			'position_y':240,
-			'type':'grass',
-			'state':'alive',
-			'age':0,
-			'max_age':20,
-			'food':5,
-			'reproduce_food':50,
-			'max_speed':5.0,
-			'behaviour':'Avoid',
-			},
-
-			{
-			'position_x':320,
-			'position_y':240,
-			'type':'grass',
-			'state':'alive',
-			'age':0,
-			'max_age':20,
-			'food':5,
-			'reproduce_food':50,
-			'max_speed':5.0,
-			'behaviour':'Avoid',
-			},
-
-			{
-			'position_x':320,
-			'position_y':240,
-			'type':'grass',
-			'state':'alive',
-			'age':0,
-			'max_age':20,
-			'food':5,
-			'reproduce_food':50,
-			'max_speed':5.0,
-			'behaviour':'Avoid',
-			},
-
-			{
-			'position_x':320,
-			'position_y':240,
+			'position_y':250,
 			'type':'grass',
 			'state':'alive',
 			'age':0,
