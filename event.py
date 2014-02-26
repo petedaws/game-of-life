@@ -7,15 +7,16 @@ class Event:
 
 	def __init__(self):
 		self.timers = []
+		self.events = []
 
 	def emit(self,event_name,*args):
-		for event in events:
+		for event in self.events:
 			if event['name'] == event_name:
 				event['callback'](*args)
 
 	def connect(self,event_name,callback):
 		assert callable(callback)
-		events.append({'name':event_name,'callback':callback})
+		self.events.append({'name':event_name,'callback':callback})
 
 	def timer_add(self,event_name,period):
 		self.timers.append[(event_name,period)]
@@ -23,7 +24,6 @@ class Event:
 	def run(self):
 		pass
 
-events = []
 timers = []
 read_fds = {}
 write_fds = []

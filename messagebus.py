@@ -39,7 +39,6 @@ class MessageTx(event.Event):
 		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 		sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
 		sock.sendto(str(data), (conf.message_bus_grp, conf.message_bus_port))
-		print data
 
 def validate_message(message):
 	if type(message) is not dict:
@@ -72,5 +71,6 @@ valid_attributes = {
 			'food':int,
 			'reproduce_food':int,
 			'max_speed':float,
+			'behaviour':str,
 			}
 		

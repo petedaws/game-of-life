@@ -36,7 +36,7 @@ class Viewer(event.Event):
 		self.window = pygame.display.set_mode((640, 480)) 
 		self.entities = {}
 		self.message_rx = messagebus.MessageRx()
-		self.connect('new_message',self.process_entity)
+		self.message_rx.connect('new_message',self.process_entity)
 
 	def start(self):
 		event.add_timer(0.02,self.draw)

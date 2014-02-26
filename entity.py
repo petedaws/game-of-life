@@ -2,9 +2,9 @@ import subprocess
 import messagebus
 import time
 import event
-import random
 import sys
 import conf
+from behaviour import *
 
 class Entity(event.Event):
 
@@ -14,7 +14,10 @@ class Entity(event.Event):
 		self.message_tx = messagebus.MessageTx()
 		self.other_entities = {}
 		self.__init_attributes(init_attributes)
+		behav = eval(self.attributes['behaviour'])(self)
+		self.behaviour = behav
 		event.add_io_watcher(self.message_rx.sock,self.message_rx.receive)
+
 
 	def __init_attributes(self,init_attributes):
 		self.entity_id,attributes = init_attributes.iteritems().next()
@@ -23,23 +26,6 @@ class Entity(event.Event):
 
 	def update_tx(self):
 		self.message_tx.transmit({self.entity_id:self.attributes})
-
-	def behaviour_random(self):
-		new_x = random.randrange(-1,2)
-		new_y = random.randrange(-1,2)
-		self.attributes['position_x'] = self.attributes['position_x']+new_x
-		self.attributes['position_y'] = self.attributes['position_y']+new_y
-		self.emit('update')
-
-	def behaviour_avoid(self):
-		for entity_id in self.other_entities:
-			x_dist = self.other_entities[entity_id].attributes['position_x'] - self.attributes['position_x']
-			y_dist = self.other_entities[entity_id].attributes['position_y'] - self.attributes['position_y']
-			if abs(x_dist) < 50:
-				self.attributes['position_x'] = self.attributes['position_x'] + 2
-			if abs(y_dist) < 50:
-				self.attributes['position_y'] = self.attributes['position_y'] + 2
-		self.emit('update')
 
 	def observe_other_entity(self,entity_message):	
 		entity_id,attributes = entity_message.popitem()
@@ -51,19 +37,18 @@ class Entity(event.Event):
 		else:
 			self.other_entities[entity_id] = Entity({entity_id:attributes})
 
-def run(entity_id,behaviour,init_attributes):
-	entity = Entity({entity_id:init_attributes})
-	entity.connect('update',entity.update_tx)
-	entity.connect('new_message',entity.observe_other_entity)
-	if behaviour == 1:
-		event.add_timer(0.1,entity.behaviour_random,name='timer1')
-	else:
-		event.add_timer(0.1,entity.behaviour_avoid,name='timer1')
+def run(entity_params_list):
+	for i,entity_params in enumerate(entity_params_list): 
+		entity = Entity({i:entity_params})
+		entity.connect('update',entity.update_tx)
+		entity.message_rx.connect('new_message',entity.observe_other_entity)
+		event.add_timer(0.1,entity.behaviour.do)
 	event.mainloop()
 
 if __name__ == "__main__":
 
-	test_init =   {
+	test_init =   [
+			{
 			'position_x':100,
 			'position_y':100,
 			'type':'grass',
@@ -73,6 +58,152 @@ if __name__ == "__main__":
 			'food':5,
 			'reproduce_food':50,
 			'max_speed':5.0,
-			}
+			'behaviour':'RandomMove',
+			},
 
-	run(int(sys.argv[1]),int(sys.argv[2]),test_init)
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			{
+			'position_x':100,
+			'position_y':100,
+			'type':'grass',
+			'state':'alive',
+			'age':0,
+			'max_age':20,
+			'food':5,
+			'reproduce_food':50,
+			'max_speed':5.0,
+			'behaviour':'RandomMove',
+			},
+
+			]
+
+	run(test_init)
