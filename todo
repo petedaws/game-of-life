@@ -1,0 +1,3 @@
+1) Potentially need to refactor. Having every entity listen for a socket can cause the OS to raise error 24 - too many sockets. May need to have a global gamestate handler or do unicast between entities.
+
+2) The Avoid behaviour may need to be refined. We should get a cumulative distance to all entities and move in the other direction.

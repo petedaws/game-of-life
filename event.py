@@ -30,7 +30,7 @@ write_fds = []
 
 def add_timer(interval,callback,name=''):
 	next = time.time() + interval
-	timers.append({'name':name,'interval':interval,'callback':callback})
+	timers.append({'name':name,'interval':interval,'callback':callback,'next':next})
 
 def modify_timer(name,interval=None,callback=None):
 	for timer in timers:

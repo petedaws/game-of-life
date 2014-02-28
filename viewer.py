@@ -51,6 +51,8 @@ class Viewer(event.Event):
 			self.entities[entity_id].update(attributes['position_x'],attributes['position_y'])
 		else:
 			self.entities[entity_id] = CellModel(attributes['position_x'],attributes['position_y'],COLOUR_MAP[attributes['behaviour']])
+		if attributes['state'] == 'dead':
+			del self.entities[entity_id]
 
 	def draw_entities(self):
 		for entity in self.entities:
