@@ -47,7 +47,6 @@ class Avoid(Behaviour):
 	def move(self):
 		if len(self.entity.other_entities) > 0:
 			entity_distances = {}
-			print len(self.entity.other_entities)
 			for entity_id in self.entity.other_entities:	
 				if self.entity.other_entities[entity_id].attributes['state'] == 'dead':
 					continue				

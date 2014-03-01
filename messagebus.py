@@ -18,7 +18,8 @@ class MessageRx(event.Event):
 		self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
 	def receive(self):
-		message = eval(self.sock.recv(1024))
+		data = self.sock.recv(2048)
+		message = eval(data)
 		if validate_message(message):
 			self.emit('new_message',message)
 
