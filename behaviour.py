@@ -54,7 +54,6 @@ class Avoid(Behaviour):
 				y_dist = self.entity.other_entities[entity_id].attributes['position_y'] - self.entity.attributes['position_y']
 				hypot_dist = math.hypot(x_dist,y_dist)
 				entity_distances[entity_id] = (x_dist,y_dist,hypot_dist)
-			closest_distance = min(entity_distances.itervalues(), key=lambda x:x[2])
 			move_x = 0
 			move_y = 0
 			for distance in entity_distances.itervalues():
