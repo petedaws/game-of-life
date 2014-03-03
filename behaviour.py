@@ -54,18 +54,21 @@ class Avoid(Behaviour):
 				y_dist = self.entity.other_entities[entity_id].attributes['position_y'] - self.entity.attributes['position_y']
 				hypot_dist = math.hypot(x_dist,y_dist)
 				entity_distances[entity_id] = (x_dist,y_dist,hypot_dist)
-
 			closest_distance = min(entity_distances.itervalues(), key=lambda x:x[2])
-
-			if closest_distance[2] == 0:
-				self.entity.attributes['position_x'] = self.entity.attributes['position_x'] + random.randrange(-4,5)		
-				self.entity.attributes['position_y'] = self.entity.attributes['position_y'] + random.randrange(-4,5)
-			elif closest_distance[2] < 50:
-				if closest_distance.index(min(closest_distance[0:2])) == 0:
-					self.entity.attributes['position_x'] = self.entity.attributes['position_x'] + int(math.copysign(1,closest_distance[1]))
-				else:
-					self.entity.attributes['position_y'] = self.entity.attributes['position_y'] + int(math.copysign(1,closest_distance[2]))
-		
+			move_x = 0
+			move_y = 0
+			for distance in entity_distances.itervalues():
+				if distance[2] == 0:
+					move_x = move_x + random.randrange(-4,5)
+					move_y = move_y + random.randrange(-4,5)
+				if distance[2] < 20:
+					move_x = move_x + distance[0]
+					move_y = move_y + distance[1]
+	
+			if move_x != 0.0:
+				self.entity.attributes['position_x'] = self.entity.attributes['position_x'] - math.log(abs(move_x))*math.copysign(1,move_x)
+			if move_y != 0.0:
+				self.entity.attributes['position_y'] = self.entity.attributes['position_y'] - math.log(abs(move_y))*math.copysign(1,move_y)
 
 class Combine(Behaviour):
 
