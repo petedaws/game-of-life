@@ -6,6 +6,7 @@ import sys
 import conf
 import copy
 import random
+import scenario
 from behaviour import *
 
 class Entity(event.Event):
@@ -74,63 +75,10 @@ def run(entity_params_list):
 
 if __name__ == "__main__":
 
-	test_init =   [
-			{
-			'position_x':320,
-			'position_y':250,
-			'type':'grass',
-			'state':'alive',
-			'age':0.0,
-			'max_age':20.0,
-			'age_rate':0.1,
-			'food':5.0,
-			'reproduce_food':100.0,
-			'max_speed':5.0,
-			'behaviour':'Avoid',
-			},
 
-			{
-			'position_x':320,
-			'position_y':250,
-			'type':'grass',
-			'state':'alive',
-			'age':0.0,
-			'max_age':20.0,
-			'age_rate':0.1,
-			'food':5.0,
-			'reproduce_food':100.0,
-			'max_speed':5.0,
-			'behaviour':'Avoid',
-			},
 
-			{
-			'position_x':320,
-			'position_y':250,
-			'type':'grass',
-			'state':'alive',
-			'age':0.0,
-			'max_age':20.0,
-			'age_rate':0.1,
-			'food':5.0,
-			'reproduce_food':100.0,
-			'max_speed':5.0,
-			'behaviour':'Avoid',
-			},
-
-			{
-			'position_x':320,
-			'position_y':250,
-			'type':'grass',
-			'state':'alive',
-			'age':0.0,
-			'max_age':20.0,
-			'age_rate':0.1,
-			'food':5.0,
-			'reproduce_food':100.0,
-			'max_speed':5.0,
-			'behaviour':'Avoid',
-			},
-
-			]
-
-	run(test_init)
+	if len(sys.argv) < 2:
+		run(scenario.test_init)
+	else:
+		scen = eval(sys.argv[1])
+		run(scen)

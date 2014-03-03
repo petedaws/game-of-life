@@ -63,8 +63,8 @@ def validate_attributes(attributes):
 	return True	
 
 valid_attributes = {
-			'position_x':int,
-			'position_y':int,
+			'position_x':float,
+			'position_y':float,
 			'type':str,
 			'state':str,
 			'age':float,
