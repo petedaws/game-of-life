@@ -14,7 +14,7 @@ BLUE =  (  0,   0, 255)
 GREEN = (  0, 255,   0)
 RED =   (255,   0,   0)
 
-COLOUR_MAP = {'RandomMove':BLUE, 'Avoid':GREEN}
+COLOUR_MAP = {'RandomMove':BLUE, 'Avoid':GREEN, 'Stationary':WHITE, 'Forage':BLUE}
 		
 
 class CellModel():
@@ -50,12 +50,14 @@ class Viewer(event.Event):
 
 	def process_entity(self,message):
 		for entity_id,attributes in message.iteritems():
-			if entity_id in self.entities:
+			if attributes['state'] == 'dead':
+				if entity_id in self.entities:
+					del self.entities[entity_id]
+			elif entity_id in self.entities:
 				self.entities[entity_id].update(attributes['position_x']+self.centre[0],attributes['position_y']+self.centre[1])
 			else:
 				self.entities[entity_id] = CellModel(attributes['position_x']+self.centre[0],attributes['position_y']+self.centre[1],COLOUR_MAP[attributes['behaviour']])
-			if attributes['state'] == 'dead':
-				del self.entities[entity_id]
+
 
 	def draw_entities(self):
 		for entity in self.entities:

@@ -75,10 +75,8 @@ def run(entity_params_list):
 
 if __name__ == "__main__":
 
-
-
 	if len(sys.argv) < 2:
-		run(scenario.test_init)
+		run(scenario.scenarios[0])
 	else:
-		scen = eval(sys.argv[1])
+		scen = scenario.scenarios[int(sys.argv[1])]
 		run(scen)

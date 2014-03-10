@@ -36,13 +36,50 @@ class Stationary(Behaviour):
 	def do(self):
 		self.entity.emit('update')
 
+class Forage(Behaviour):
+
+	def do(self):
+		if self.entity.attributes['state'] != 'dead':
+			self.move()
+			self.entity.emit('update')
+
+	def move(self):
+		if self.entity.attributes['state'] != 'dead':
+			closest = self._closest_food()
+			if closest is not None and closest[3] > 1.0:
+					self.entity.attributes['position_x'] = self.entity.attributes['position_x'] + math.copysign(1,closest[1])
+					self.entity.attributes['position_y'] = self.entity.attributes['position_y'] + math.copysign(1,closest[2])
+
+	def _closest_food(self):
+		if len(self.entity.other_entities) > 0:
+			food_distances = []
+			closest = None
+			for entity_id in self.entity.other_entities:
+				if self.entity.other_entities[entity_id].attributes['type'] == 'grass':
+					x_dist = self.entity.other_entities[entity_id].attributes['position_x'] - self.entity.attributes['position_x']
+					y_dist = self.entity.other_entities[entity_id].attributes['position_y'] - self.entity.attributes['position_y']
+					hypot_dist = math.hypot(x_dist,y_dist)
+					food_distances.append((entity_id,x_dist,y_dist,hypot_dist))
+					if hypot_dist <= min([dist[3] for dist in food_distances]):
+						closest = (entity_id,x_dist,y_dist,hypot_dist)
+			return closest
+
+
+class Combine(Behaviour):
+
+	def __init__(self,entity):
+		Behaviour.__init__(self,entity)
+		self.avoid = Avoid(self.entity)
+		self.ran = RandomMove(self.entity)
+
 class Avoid(Behaviour):
 	
 	def do(self):
-		self.move()
-		self.age()
-		self.eat(1)
-		self.entity.emit('update')
+		if self.entity.attributes['state'] != 'dead':
+			self.move()
+			self.age()
+			self.eat(1)
+			self.entity.emit('update')
 
 	def move(self):
 		if len(self.entity.other_entities) > 0:
